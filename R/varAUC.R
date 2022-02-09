@@ -3,6 +3,19 @@
 
 
 
+#' Calculate an unbiased variance estimator of AUC
+#'
+#' @param p_pred A vector of the predicted probabilities for the observations in the data set
+#' @param label_true A vector of the true labels in the dataset, coded as 1 (positive) and 0 (negative)
+#' @param B The number of random partitions to use in the partition-resampling scheme
+#'
+#' @return A float indicating the value of the AUC variance estimator
+#' @export
+#'
+#' @examples
+#' varAUC(c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,0.97,0.66,
+#' 0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67,0.23),
+#' c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0), 10)
 varAUC <- function(p_pred, label_true, B){
   # Convert label_true vector into a factor
   labels <- as.factor(label_true)
