@@ -4,23 +4,26 @@
 \alias{varAUC}
 \title{Calculate an unbiased variance estimator of AUC}
 \usage{
-varAUC(p_pred, label_true, B)
+varAUC(p_pred, label_true, B = Inf)
 }
 \arguments{
 \item{p_pred}{A vector of the predicted probabilities for the observations in the data set}
 
 \item{label_true}{A vector of the true labels in the dataset, coded as 1 (positive) and 0 (negative)}
 
-\item{B}{The number of random partitions to use in the partition-resampling scheme}
+\item{B}{The number of random partitions to use in the partition-resampling scheme. If B is
+set to Inf or it is ommited, the exact number of possible partitions will be calculated.}
 }
 \value{
-A float indicating the value of the AUC variance estimator
+The value of the AUC variance estimator
 }
 \description{
 Calculate an unbiased variance estimator of AUC
 }
 \examples{
-varAUC(c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,0.97,0.66,
-0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67,0.23),
-c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0), 10)
+prediction_vector <- c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,
+0.97,0.66, 0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67
+,0.23)
+label_vector <- c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0)
+varAUC(prediction_vector, label_vector, 10)
 }
