@@ -5,7 +5,7 @@
 \title{Asymptotic confidence interval of AUC based on an unbiased variance estimator
 and the asymptotic normality}
 \usage{
-CI_AUC(p_pred, label_true, conf_level = 0.95)
+CI_AUC(p_pred, label_true, conf_level = 0.95, B = Inf)
 }
 \arguments{
 \item{p_pred}{A vector of the predicted probabilities for the observations in the data set}
@@ -13,10 +13,13 @@ CI_AUC(p_pred, label_true, conf_level = 0.95)
 \item{label_true}{A vector of the true labels in the dataset, coded as 1 (positive) and 0 (negative)}
 
 \item{conf_level}{The confidence level required.The default is 0.95.}
+
+\item{B}{An integer indicating the desired number of bootstrap samples to calculate the variance
+of the AUC. If B is set to Inf or it is ommited, the exact number of possible partitions will be calculated.}
 }
 \value{
 A matrix (or vector) with columns giving lower and upper confidence limits
-for each parameter. These will be labelled as (1-level)/2 and 1 - (1-level)/2 in \%
+for each parameter. These will be labeled as (1-level)/2 and 1 - (1-level)/2 in \%
 (by default 2.5\% and 97.5\%).
 }
 \description{
@@ -24,5 +27,11 @@ Asymptotic confidence interval of AUC based on an unbiased variance estimator
 and the asymptotic normality
 }
 \examples{
-'TODO'
+library(aucvar)
+data <- na.omit(breastcancer) # Omit NA values
+optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+prob <- predict(optimal_model, type="response")
+labels <- data$Class
+CI_AUC(prob, labels)
 }

@@ -4,10 +4,10 @@
 \alias{var_boot}
 \title{Calculate the bootstrap variance estimator for AUC}
 \usage{
-var_boot(formula, label_true, data, B, link = "logit")
+var_boot(formula_string, label_true, data, B, link = "logit")
 }
 \arguments{
-\item{formula}{A string with an expression of the form \code{y ~ model} that represents
+\item{formula_string}{A string with an expression of the form \code{y ~ model} that represents
 the binary classification model. It may include operators as +, ^ and :}
 
 \item{label_true}{A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)}
@@ -30,5 +30,10 @@ The value of the bootstrap variance estimator for the AUC.
 Calculate the bootstrap variance estimator for AUC
 }
 \examples{
-'TODO'
+library(aucvar)
+data <- na.omit(breastcancer) # Omit NA values
+model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+`Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
+# dataset variable names have spaces
+var_boot(model_formula, data$Class, data, B = 200)
 }

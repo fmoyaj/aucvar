@@ -10,8 +10,7 @@ auc(p_pred, label_true)
 \item{p_pred}{A vector of the predicted probabilities for the observations
 in the data set.}
 
-\item{label_true}{A vector of the true labels in the dataset, coded as 1
-(positive) and 0 (negative).}
+\item{label_true}{A vector containing the true class labels in the dataset.}
 }
 \value{
 Area under the ROC curve, which is equal to the Wilcoxon-Mann-Whitney
@@ -22,8 +21,11 @@ randomly drawn positive sample higher than a randomly drawn negative sample.
 Calculate the area under the ROC curve
 }
 \examples{
-prediction_vector <- c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,
-0.97,0.66, 0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67,0.23)
-label_vector <- c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0)
-auc(prediction_vector, label_vector)
+library(aucvar)
+data <- na.omit(breastcancer) # Omit NA values
+optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+prob <- predict(optimal_model, type="response")
+labels <- data$Class
+auc(prob, labels)
 }

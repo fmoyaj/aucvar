@@ -1,6 +1,8 @@
 # Check that N > d, if not raise an error
 # Add recommendations for d in the recommendation
 # Special case:if d = 1,that is the default. Total number of n possibilities. Add delete-1 version.
+# How to modify code for delete 1 version? Delete each observation, one at a time. Fit model n times???
+# Add warning for delete 1 -> function needs to be smooth enough
 
 
 
@@ -35,7 +37,12 @@ makeBinaryLabels <- function(label_data){
 #' @export
 #'
 #' @examples
-#' 'TODO'
+#' library(aucvar)
+#' data <- na.omit(breastcancer) # Omit NA values
+#' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+#' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
+#' # dataset variable names have spaces
+#' var_jackknife(model_formula, data$Class, data, B = 200, d = 100)
 var_jackknife <- function(formula, label_true, data, B = Inf, d, link = "logit"){
   # Convert label_true vector into a factor
   labels <- makeBinaryLabels(label_true)
@@ -48,7 +55,7 @@ var_jackknife <- function(formula, label_true, data, B = Inf, d, link = "logit")
 
   N <- base::nrow(data) # Size of data, which is also the size of the sample
 
-  # Calculating the total number of partitions if B is Inf or not provided -> combinationof indeces
+  # Calculating the total number of partitions if B is Inf or not provided -> combination of indexes
   if (B == Inf){
       B <- base::choose(N, d)
   }
@@ -56,16 +63,18 @@ var_jackknife <- function(formula, label_true, data, B = Inf, d, link = "logit")
   jack.AUC <-base::array(NA, B)
 
   for (b in 1:B){
-    jack.sample <-data[base::sample(N, N-d, replace = F),] # Draw sample of size N-d with no replacement
+    index <- base::sample(N, N-d, replace = F)
+    jack.sample <-data[index,] # Draw sample of size N-d with no replacement
 
     # If the sample is all O's or all 1's, assume that sample is improbable
-    if (base::unique(jack.sample) == 1){
+    if (all(labels[index] == 0) || all(labels[index] == 1)){
       next
     }
 
     # Update entries in jack.AUC array with calculated AUC values
     fit <-stats::glm(formula.obj, family = stats::binomial(link = link), data = jack.sample)
-    jack.AUC[b] <-aucvar::auc(stats::predict.glm(fit, newdata = jack.sample, type = "response"))
+    jack.AUC[b] <-aucvar::auc(stats::predict.glm(fit, newdata = jack.sample, type = "response"),
+                              labels[index])
 
 
   }

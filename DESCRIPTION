@@ -19,5 +19,8 @@ Imports:
     base,
     ROCR,
     stats,
-    utils
-    
+    utils,
+    VeryLargeIntegers
+Depends: 
+    R (>= 2.10)
+LazyData: true

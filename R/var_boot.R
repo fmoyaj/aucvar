@@ -1,10 +1,8 @@
 # fomula look at ?formula from stats package
 # allow to change link? - YES. TODO: Add error
-# data needs to be dataset without the response
-# formula is not in the right format
+# errors: data needs to be dataset without the response
+# errors: formula is not in the right format
 # takes too much time to exectute
-# how many decimal points for SD ?
-# Figure out deal with helper functions to not have them in two separate files
 # TODO:example
 
 
@@ -23,7 +21,7 @@ makeBinaryLabels <- function(label_data){
 
 #' Calculate the bootstrap variance estimator for AUC
 #'
-#' @param formula A string with an expression of the form `y ~ model` that represents
+#' @param formula_string A string with an expression of the form `y ~ model` that represents
 #' the binary classification model. It may include operators as +, ^ and :
 #' @param label_true A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)
 #' @param data A data frame, list or environment containing the variables in the model
@@ -38,14 +36,19 @@ makeBinaryLabels <- function(label_data){
 #' @export
 #'
 #' @examples
-#' 'TODO'
-var_boot <- function(formula, label_true, data, B, link = "logit"){
+#' library(aucvar)
+#' data <- na.omit(breastcancer) # Omit NA values
+#' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+#' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
+#' # dataset variable names have spaces
+#' var_boot(model_formula, data$Class, data, B = 200)
+var_boot <- function(formula_string, label_true, data, B, link = "logit"){
 
   # Convert label_true vector into a factor
   labels <- makeBinaryLabels(label_true)
 
   # Convert string formula into a formula object from the stats package
-  formula.obj <- stats::formula(formula)
+  formula.obj <- stats::formula(formula_string)
 
   posLabelLen <- base::length(base::subset(labels, labels==1))
   negLabelLen <- base::length(base::subset(labels, labels==0))
@@ -56,17 +59,18 @@ var_boot <- function(formula, label_true, data, B, link = "logit"){
 
   # For each sampled partition
   for (b in 1:B){
-    boot.sample <-data[base::sample(N, N, replace = T),] # Draw sample of size N with replacement
+    index <- base::sample(N, N, replace = T)
+    boot.sample <-data[index,] # Draw sample of size N with replacement
 
     # If the sample is all O's or all 1's, assume that sample is improbable
-    if (base::unique(boot.sample) == 1){
+    if (all(labels[index] == 0) || all(labels[index] == 1)){
       next
     }
 
     # Update entries in boot.AUC array with calculated AUC values
-    # Choose the link, add options: ?????
     fit <-stats::glm(formula.obj, family = stats::binomial(link = link), data = boot.sample)
-    boot.AUC[b] <-aucvar::auc(stats::predict.glm(fit, newdata = boot.sample, type = "response"))
+    boot.AUC[b] <-aucvar::auc(stats::predict.glm(fit, newdata = boot.sample, type = "response"),
+                              labels[index])
   }
 
   return(stats::var(boot.AUC))

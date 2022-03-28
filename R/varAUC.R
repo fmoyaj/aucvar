@@ -14,7 +14,7 @@ makeBinaryLabels <- function(label_data){
 }
 
 
-exactVar <- function(labels, p_pred, m, n1, n2){
+exactVarAUC <- function(labels, p_pred, m, n1, n2){
   pos.label <-  utils::combn(n1,2)
   neg.label <-  utils::combn(n2,2)
 
@@ -52,11 +52,12 @@ exactVar <- function(labels, p_pred, m, n1, n2){
 #' @export
 #'
 #' @examples
-#' prediction_vector <- c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,
-#' 0.97,0.66, 0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67
-#' ,0.23)
-#' label_vector <- c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0)
-#' varAUC(prediction_vector, label_vector, 10)
+#' library(aucvar)
+#' data <- na.omit(breastcancer) # Omit NA values
+#' optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+#' `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+#' predictions <- predict(optimal_model, type="response")
+#' varAUC(predictions, data$Class, 10)
 varAUC <- function(p_pred,
                    label_true,
                    B = Inf){
@@ -72,7 +73,7 @@ varAUC <- function(p_pred,
   # If B is Inf or not present, calculate the exact number of partitions
   # Go with the original definition of the formula Q(2) - Q(0)
   if (B == Inf){
-      var <- exactVar(labels, p_pred, m, posLabelLen, negLabelLen)
+      var <- exactVarAUC(labels, p_pred, m, posLabelLen, negLabelLen)
       return (var)
   }
 

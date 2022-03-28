@@ -4,7 +4,7 @@
 \alias{var_jackknife}
 \title{Calculate the jackknife variance estimator for AUC}
 \usage{
-var_jackknife(formula, label_true, data, B = Inf, d)
+var_jackknife(formula, label_true, data, B = Inf, d, link = "logit")
 }
 \arguments{
 \item{formula}{A string with an expression of the form y ~ model that represents
@@ -19,6 +19,11 @@ to a data frame.}
 \item{B}{An integer indicating the desired number of jackknife samples}
 
 \item{d}{Number of data entries to remove to generate the jackknife samples}
+
+\item{link}{A string specifying the model link function for glm function
+used to fit the binomial model. Possible links include \code{logit}., \code{probit}, \code{cauchit},
+(corresponding to logistic, normal and Cauchy CDFs respectively) \code{log} and
+\code{cloglog} (complementary log-log). The default is \code{logit}.}
 }
 \value{
 The value of the jackknife variance estimator for the AUC
@@ -27,5 +32,10 @@ The value of the jackknife variance estimator for the AUC
 Calculate the jackknife variance estimator for AUC
 }
 \examples{
-'TODO'
+library(aucvar)
+data <- na.omit(breastcancer) # Omit NA values
+model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+`Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
+# dataset variable names have spaces
+var_jackknife(model_formula, data$Class, data, B = 200, d = 100)
 }

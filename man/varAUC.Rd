@@ -21,9 +21,10 @@ The value of the AUC variance estimator
 Calculate an unbiased variance estimator of AUC
 }
 \examples{
-prediction_vector <- c(0.50,0.36,0.68,0.10,0.54,0.36,0.88,0.95,0.32,0.45,0.12,
-0.97,0.66, 0.22,0.45,0.19,0.87,0.44,0.32,0.11,0.94,0.43,0.55,0.32,0.67,0.67
-,0.23)
-label_vector <- c(1,0,1,1,0,0,1,0,1,1,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0)
-varAUC(prediction_vector, label_vector, 10)
+library(aucvar)
+data <- na.omit(breastcancer) # Omit NA values
+optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+predictions <- predict(optimal_model, type="response")
+varAUC(predictions, data$Class, 10)
 }

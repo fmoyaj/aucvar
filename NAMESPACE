@@ -3,5 +3,6 @@
 export(CI_AUC)
 export(auc)
 export(varAUC)
+export(varUn)
 export(var_boot)
 export(var_jackknife)
