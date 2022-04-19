@@ -4,10 +4,10 @@
 \alias{var_jackknife}
 \title{Calculate the jackknife variance estimator for AUC}
 \usage{
-var_jackknife(formula, label_true, data, B = Inf, d, link = "logit")
+var_jackknife(formula_string, label_true, data, B = Inf, d, link = "logit")
 }
 \arguments{
-\item{formula}{A string with an expression of the form y ~ model that represents
+\item{formula_string}{A string with an expression of the form y ~ model that represents
 the binary classification model. It may include operators as +, ^ and :}
 
 \item{label_true}{A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)}
@@ -16,9 +16,11 @@ the binary classification model. It may include operators as +, ^ and :}
 except for the response variable. It can also be an object coercible by as.data.frame
 to a data frame.}
 
-\item{B}{An integer indicating the desired number of jackknife samples}
+\item{B}{An integer indicating the desired number of jackknife samples.}
 
-\item{d}{Number of data entries to remove to generate the jackknife samples}
+\item{d}{Number of data entries to remove to generate the jackknife samples.
+If d is equal to 1, the delete-one version of the jackknife variance estimator
+will be used and B does not need to be specified.}
 
 \item{link}{A string specifying the model link function for glm function
 used to fit the binomial model. Possible links include \code{logit}., \code{probit}, \code{cauchit},
@@ -37,5 +39,5 @@ data <- na.omit(breastcancer) # Omit NA values
 model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
 # dataset variable names have spaces
-var_jackknife(model_formula, data$Class, data, B = 200, d = 100)
+var_jackknife(model_formula, data$Class, data, B = 10^3, d = 20)
 }

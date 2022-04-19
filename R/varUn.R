@@ -1,30 +1,48 @@
-# Kendall Tau example -> provide U-stat?????
 
-
-uStat <- function(sample1, sample2, n1, n2, k1, k2, phi){
-  stat <-  1/(VeryLargeIntegers::binom(n1,k1)*VeryLargeIntegers::binom(n2,k2))
+Ustat <- function(sample1, sample2, k1, k2, phi)
+{
+  n1 <- length(sample1)
+  n2 <- length(sample2)
+  const <-  1/(VeryLargeIntegers::binom(n1,k1)*VeryLargeIntegers::binom(n2,k2))
   sum <- 0
 
   s1_label <- utils::combn(n1,k1)
   s2_label <- utils::combn(n2,k2)
 
-  # for loop
+  for (i in 1:ncol(s1_label))
+  {
+    for (j in 1:ncol(s2_label))
+    {
+      sum <- sum + phi(sample1[s1_label[,i]], sample2[s2_label[,j]])
+    }
+  }
 
-  return (stat)
+  return(const*sum)
 }
 
 
-exactVar <- function(sample1, sample2, n1, n2, k1, k2, phi){
+exactVar <- function(sample1, sample2, k1, k2, phi, u_stat)
+{
+  n1 <- length(sample1)
+  n2 <- length(sample2)
 
   N0 <- VeryLargeIntegers::binom(n1, k1)*VeryLargeIntegers::binom(n1-k1,k1)*
     VeryLargeIntegers::binom(n2,k2)*VeryLargeIntegers::binom(n2-k2,k2)
 
-  if (N0 > 10^5){
+  if (N0 > 10^5)
+  {
     stop("The exhaustive number of non-overlapping pairs of data subsets is greater than 10^5.
-         It is computationally expensive to compute the exact U-statistic variance.")
+         It is computationally expensive to compute the exact unbiased U-statistic variance estimate.")
   }
 
-  Qk <- uStat(sample1, sample2, n1, n2, k1, k2, phi)^2
+  if (!base::is.null(u_stat))
+  {
+    Qk <- u_stat^2
+
+  }else
+  {
+    Qk <- Ustat(sample1, sample2, k1, k2, phi)^2
+  }
 
   Q0 <- 0
   id_n1_choose_2k1 <- utils::combn(n1,2*k1)
@@ -36,13 +54,13 @@ exactVar <- function(sample1, sample2, n1, n2, k1, k2, phi){
   {
     for(j in 1:VeryLargeIntegers::binom(n2,2*k2))
     {
-      sample_2k1 <- sample1[id_n1_choose_2k1[i,]]
-      sample_2k2 <- sample2[id_n2_choose_2k2[j,]]
+      sample_2k1 <- sample1[id_n1_choose_2k1[,i]]
+      sample_2k2 <- sample2[id_n2_choose_2k2[,j]]
       for(s in 1:VeryLargeIntegers::binom(2*k1,k1))
       {
         for(t in 1:VeryLargeIntegers::binom(2*k2,k2))
         {
-          Q0 <- Q0 +(1/N0)*phi(c(sample_2k1[id_2k1_choose_k1[s,]], sample_2k2[id_2k2_choose_k2[t,]]) ) * phi(c(sample_2k1[-id_2k1_choose_k1[s,]], sample_2k2[-id_2k2_choose_k2[t,]]) )
+          Q0 <- Q0 +(1/N0)*phi(c(sample_2k1[id_2k1_choose_k1[,s]], sample_2k2[id_2k2_choose_k2[,t]]) ) * phi(c(sample_2k1[-id_2k1_choose_k1[,s]], sample_2k2[-id_2k2_choose_k2[,t]]) )
         }
       }
     }
@@ -61,41 +79,66 @@ exactVar <- function(sample1, sample2, n1, n2, k1, k2, phi){
 #' @param k1 The number of observations from sample 1.
 #' @param k2 The number of observations from sample 2.
 #' @param phi The kernel function for the U-statistic
-#' @param B The number of random partitions.
+#' @param B The number of random partitions in the partition-resampling realization.
+#' @param u_stat TThe value of the U-statistic. This is an optional argument. if provided, Q(k) is computed as the square of the inpute u_stat vlaue. Otherwise, the U-statistic is computed based on the input kernel function phi.
 #'
 #' @return The variance of the 2-sample U-statistic
 #' @export
 #'
 #' @examples
-#' 'TODO'
+#' library(VGAM)
+#' N <- 500
+#' true.rho <- 0.7
+#' data.mat <- rbinorm(N, cov12 =  true.rho)  # Bivariate normal
+#' x <- data.mat[, 1]
+#' y <- data.mat[, 2]
+#' u_stat_value <- kendall.tau(x,y,exact=TRUE) # Exact value of Kendall Tau statistic
+#' # Phi function for the Kendall Tau statistic
+#' kernel <- function (s1, s2){
+#' result <- 0
+#' ind <- 0
+#' if (s1[1] < s2[1] && s1[2] < s2[2]){
+#' ind <- 1
+#' } else if (s1[1] > s2[1] && s1[2] > s2[2]) {
+#' ind <- 1
+#' }
+#' return (2*(ind)-1)
+#' }
+#' varUn(x, y, 2, 2, kernel, 10^3, u_stat_value)
 
 
-varUn <- function(sample1, sample2, k1, k2, phi , B = Inf){
+varUn <- function(sample1, sample2, k1, k2, phi , B = Inf, u_stat= NULL)
+{
 
   # Check parameters
   if (typeof(phi) != "closure"){
     stop("the argument 'phi' is not a function.")
   }
 
-  # Length of array
-  n1 <- base::nrow(sample1)
-  n2 <- base::nrow(sample2)
-
   # Length of vector
-  if (base::is.null(n1) || base::is.null(n2)){
-    n1 <- base::length(sample1)
-    n2 <- base::length(sample2)
+  n1 <- base::length(sample1)
+  n2 <- base::length(sample2)
+
+  if (k1 > n1/2 || k2 > n2/2)
+  {
+    stop("k1, k2 cannot be greater than half of the length of the corresponding sample n1 or n2")
   }
 
-  if (k1 > n1/2 || k2 > n2/2){
-    stop("k1, k2 cannot be greater than half of the length of the corresponding sample n1 or n2")
+  if (B == Inf)
+  {
+    var <- exactVar(sample1, sample2, k1, k2, phi, u_stat)
+    return (var)
   }
 
 
   # Maximum number of partitions we can get
   m <- base::min(base::floor(n1/k1), base::floor(n2/k2))
 
-  for (b in 1:B){
+  phi_bar_b <-base::array(NA,B)
+  WPSS <-base::rep(NA,B)
+
+  for (b in 1:B)
+  {
     # For each sampled partition
     kernel <-base::array(NA,m)
 
@@ -111,7 +154,8 @@ varUn <- function(sample1, sample2, k1, k2, phi , B = Inf){
     # Based on the shuffled samples, can consider blocks of size k1 (or k2) consecutively as the subsample(s) in the kernel function
     for (block in 1:m)
     {
-      kernel[block] <- phi(sample1[id1.shuffle[((block-1)*k1):(block*k1)], ], sample2[id2.shuffle[((block-1)*k2):(block*k2)], ])
+
+      kernel[block] <- phi(sample1[id1.shuffle[((block-1)*k1):(block*k1)]], sample2[id2.shuffle[((block-1)*k2):(block*k2)]])
     }
 
     phi_bar_b[b] <- base::mean(kernel)

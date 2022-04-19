@@ -1,7 +1,3 @@
-# Errors: confidence level not between 0-1 ranges
-
-
-
 #' Asymptotic confidence interval of AUC based on an unbiased variance estimator
 #' and the asymptotic normality
 #'
@@ -19,19 +15,33 @@
 #'
 #' @examples
 #' library(aucvar)
-#' data <- na.omit(breastcancer) # Omit NA values
+#' mydata <- na.omit(breastcancer) # Omit NA values
 #' optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-#' `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+#' `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
 #' prob <- predict(optimal_model, type="response")
-#' labels <- data$Class
+#' labels <- mydata$Class
 #' CI_AUC(prob, labels)
-CI_AUC <- function(p_pred, label_true, conf_level = 0.95, B = Inf){
+CI_AUC <- function(p_pred, label_true, conf_level = 0.95, B = Inf)
+{
+  # Checking arguments
+  # conf_level must be between 0 and 1
+  if (conf_level < 0 || conf_level > 1)
+  {
+    stop("conf_level must be between 0 and 1")
+  }
+
+  # B is a number or Inf
+  if (B != Inf & B%%1 != 0)
+  {
+    stop("B must be equal to an integer number, Inf or not specified.")
+  }
+
   auc.value <- aucvar::auc(p_pred, label_true)
   se <- base::sqrt(aucvar::varAUC(p_pred, label_true, B))
   margin.error <- stats::qnorm(conf_level + (1-(conf_level))/2) * se
   result <- base::matrix(c(auc.value - margin.error, auc.value + margin.error),
                          nrow = 1, dimnames = list(c(NULL),
-                        c(paste(toString((1-conf_level)*100/2), '%'),
-                          paste(toString(100-(1-conf_level)*100/2), '%'))))
+                                                   c(paste(toString((1-conf_level)*100/2), '%'),
+                                                     paste(toString(100-(1-conf_level)*100/2), '%'))))
   return (result)
 }

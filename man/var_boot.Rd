@@ -19,7 +19,7 @@ to a data frame.}
 \item{B}{An integer indicating the desired number of bootstrap samples}
 
 \item{link}{A string specifying the model link function for glm function
-used to fit the binomial model. Possible links include \code{logit}., \code{probit}, \code{cauchit},
+used to fit the binomial model. Possible links are \code{logit}., \code{probit}, \code{cauchit},
 (corresponding to logistic, normal and Cauchy CDFs respectively) \code{log} and
 \code{cloglog} (complementary log-log). The default is \code{logit}.}
 }
@@ -35,5 +35,5 @@ data <- na.omit(breastcancer) # Omit NA values
 model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
 # dataset variable names have spaces
-var_boot(model_formula, data$Class, data, B = 200)
+var_boot(model_formula, data$Class, data, B = 10^3)
 }

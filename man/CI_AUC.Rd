@@ -28,10 +28,10 @@ and the asymptotic normality
 }
 \examples{
 library(aucvar)
-data <- na.omit(breastcancer) # Omit NA values
+mydata <- na.omit(breastcancer) # Omit NA values
 optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
 prob <- predict(optimal_model, type="response")
-labels <- data$Class
+labels <- mydata$Class
 CI_AUC(prob, labels)
 }

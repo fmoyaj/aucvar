@@ -1,6 +1,7 @@
 #' Breast Cancer Wisconsin Original Data Set
 #'
-#' Dataset containing the original Wisconsin breast cancer data.
+#' Dataset containing the original Wisconsin breast cancer data. This dataset records
+#' the measurements for breast cancer cases as collected by Dr. Wolberg.
 #'
 #' @format A data frame with 699 instances and 10 attributes. The variables are as follows:
 #' \describe{
@@ -17,5 +18,6 @@
 #'   ...
 #' }
 #' @source \url{https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Original)}
+#' @usage data(breastcancer)
 "breastcancer"
 

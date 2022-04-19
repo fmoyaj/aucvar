@@ -13,8 +13,8 @@ in the data set.}
 \item{label_true}{A vector containing the true class labels in the dataset.}
 }
 \value{
-Area under the ROC curve, which is equal to the Wilcoxon-Mann-Whitney
-test statistic and also the probability that the classifier will score are
+Area under the ROC curve, which is equal to the Mann-Whitney
+two-sample U-statistic. It is also the estimated probability that the binary classifier will score a
 randomly drawn positive sample higher than a randomly drawn negative sample.
 }
 \description{
@@ -22,10 +22,10 @@ Calculate the area under the ROC curve
 }
 \examples{
 library(aucvar)
-data <- na.omit(breastcancer) # Omit NA values
+mydata <- na.omit(breastcancer) # Omit NA values
 optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
 prob <- predict(optimal_model, type="response")
-labels <- data$Class
+labels <- mydata$Class
 auc(prob, labels)
 }

@@ -26,5 +26,5 @@ data <- na.omit(breastcancer) # Omit NA values
 optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
 predictions <- predict(optimal_model, type="response")
-varAUC(predictions, data$Class, 10)
+varAUC(predictions, data$Class, 10^3)
 }
