@@ -28,3 +28,7 @@ optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 predictions <- predict(optimal_model, type="response")
 varAUC(predictions, mydata$Class, 10^3)
 }
+\references{
+\cite{Wang Q, Guo A. An efficient variance estimator of AUC and its applications to binary
+classification. Statistics in Medicine. 2020;1–20. https://doi.org/10.1002/sim.8725}
+}

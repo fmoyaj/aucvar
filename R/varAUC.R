@@ -48,6 +48,10 @@ exactVarAUC <- function(label_true, p_pred, n1, n2)
 #' @param B The number of random partitions to use in the partition-resampling scheme. If B is
 #' set to Inf or it is ommited, the exact number of possible partitions will be calculated.
 #'
+#' @references
+#' \cite{Wang Q, Guo A. An efficient variance estimator of AUC and its applications to binary
+#' classification. Statistics in Medicine. 2020;1–20. https://doi.org/10.1002/sim.8725}
+#'
 #' @return The value of the AUC variance estimator
 #' @export
 #'
