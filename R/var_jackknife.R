@@ -1,12 +1,3 @@
-# Check whether N > d, if not, report an error
-# Add recommendations for d in the recommendation
-# Special case:if d = 1,that is the default. Total number of n possibilities. Add delete-1 version.
-# How to modify code for delete 1 version? Delete each observation, one at a time. Fit model n times???
-# Add warning for delete 1 -> function needs to be smooth enough
-
-
-
-
 # Helper function
 # Convert a vector of labels into positive (1) and negative classes (0)
 makeBinaryLabels <- function(label_data)
@@ -18,6 +9,28 @@ makeBinaryLabels <- function(label_data)
     base::levels(labels) <- c(0,1)
   }
   return(labels)
+}
+
+# Delete-one version of jackknife
+deleteOne <- function(formula.obj, labels, data, link) {
+
+  N <- base::nrow(data) # Size of data, which is also the size of the sample
+  jack.AUC <-base::array(NA, N)
+
+  for (i in 1:N)
+    {
+
+    jack.sample <-data[-i,] # Take out ith observation
+
+    # Update entries in jack.AUC array with calculated AUC values
+    fit <-stats::glm(formula.obj, family = stats::binomial(link = link), data = jack.sample)
+    jack.AUC[i] <- aucvar::auc(stats::predict.glm(fit, newdata = jack.sample, type = "response"),
+                               labels[-i])
+
+
+  }
+
+  return (((N-1)/(N))* base::sum((jack.AUC-mean(jack.AUC))^2))
 }
 
 
@@ -43,54 +56,69 @@ makeBinaryLabels <- function(label_data)
 #'
 #' @examples
 #' library(aucvar)
-#' data <- na.omit(breastcancer) # Omit NA values
+#' mydata <- na.omit(breastcancer) # Omit NA values
 #' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 #' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
 #' # dataset variable names have spaces
-#' var_jackknife(model_formula, data$Class, data, B = 10^3, d = 20)
+#' var_jackknife(model_formula, mydata$Class, mydata, B = 10^3, d = 20)
 var_jackknife <- function(formula_string, label_true, data, B = Inf, d, link = "logit")
 {
   # Check arguments
   # formula_string must be a string
   if (base::typeof(formula_string) != "character")
   {
-    stop("formula_string must be a string")
+    base::stop("formula_string must be a string")
   }
 
   # label_true must be a vector or a factor
   if (!base::is.vector(label_true) && !base::is.factor(label_true))
   {
-    stop("label_true must be a vector or a factor")
+    base::stop("label_true must be a vector or a factor")
   }
 
   # label_true must have two levels
   if (!base::length(base::levels(base::as.factor(label_true)))){
-    stop("label_true must have two levels")
+    base::stop("label_true must have two levels")
   }
 
   # B must be an integer
   if (B%%1 != 0)
   {
-    stop("B must be an integer number")
+    base::stop("B must be an integer number")
   }
 
   # Links must be in the list of accepted links for the binomial family
   if (!(link %in% c("logit", "probit", "cauchit", "log", "cloglog")))
   {
-    stop("Link provided is not valid. Link must be logit, probit,
+    base::stop("Link provided is not valid. Link must be logit, probit,
          cauchit, log, cloglog")
+  }
+
+  N <- base::nrow(data) # Size of data, which is also the size of the sample
+
+  # N must be greater than d
+  if (N < d)
+  {
+    base::stop("d must be smaller than the length of the dataset provided")
   }
 
   # Convert label_true vector into a factor
   labels <- makeBinaryLabels(label_true)
 
   # Convert string formula into a formula object from the stats package
-  formula.obj <- stats::formula(formula_string)
+  formula.obj <- base::tryCatch({stats::formula(formula_string)}, error = function(){
+    base::stop("Could not convert given formula_string into a formula object.")
+  })
+
+
+  # If d is equal to 1, do delete-one version of jackknife calculation and return
+  if (d == 1)
+  {
+    return (deleteOne(formula.obj, labels, data, link))
+  }
 
   posLabelLen <- base::length(base::subset(labels, labels==1))
   negLabelLen <- base::length(base::subset(labels, labels==0))
-
-  N <- base::nrow(data) # Size of data, which is also the size of the sample
 
   # Calculating the total number of partitions if B is Inf or not provided -
   if (B == Inf)

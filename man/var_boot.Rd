@@ -31,9 +31,9 @@ Calculate the bootstrap variance estimator for AUC
 }
 \examples{
 library(aucvar)
-data <- na.omit(breastcancer) # Omit NA values
+mydata <- na.omit(breastcancer) # Omit NA values
 model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
 # dataset variable names have spaces
-var_boot(model_formula, data$Class, data, B = 10^3)
+var_boot(model_formula, mydata$Class, mydata, B = 10^3)
 }

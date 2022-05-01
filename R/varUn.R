@@ -31,7 +31,7 @@ exactVar <- function(sample1, sample2, k1, k2, phi, u_stat)
 
   if (N0 > 10^5)
   {
-    stop("The exhaustive number of non-overlapping pairs of data subsets is greater than 10^5.
+    base::stop("The exhaustive number of non-overlapping pairs of data subsets is greater than 10^5.
          It is computationally expensive to compute the exact unbiased U-statistic variance estimate.")
   }
 
@@ -80,7 +80,9 @@ exactVar <- function(sample1, sample2, k1, k2, phi, u_stat)
 #' @param k2 The number of observations from sample 2.
 #' @param phi The kernel function for the U-statistic
 #' @param B The number of random partitions in the partition-resampling realization.
-#' @param u_stat TThe value of the U-statistic. This is an optional argument. if provided, Q(k) is computed as the square of the inpute u_stat vlaue. Otherwise, the U-statistic is computed based on the input kernel function phi.
+#' @param u_stat TThe value of the U-statistic. This is an optional argument.
+#' If provided, Q(k) is computed as the square of the inputed u_stat vlaue.
+#' Otherwise, the U-statistic is computed based on the input kernel function phi.
 #'
 #' @return The variance of the 2-sample U-statistic
 #' @export
@@ -112,7 +114,13 @@ varUn <- function(sample1, sample2, k1, k2, phi , B = Inf, u_stat= NULL)
 
   # Check parameters
   if (typeof(phi) != "closure"){
-    stop("the argument 'phi' is not a function.")
+    base::stop("the argument 'phi' is not a function.")
+  }
+
+  # B must be an integer or Inf
+  if (B%%1 != 0 & B != Inf)
+  {
+    base::stop("B must be an integer number or Inf")
   }
 
   # Length of vector
@@ -121,7 +129,7 @@ varUn <- function(sample1, sample2, k1, k2, phi , B = Inf, u_stat= NULL)
 
   if (k1 > n1/2 || k2 > n2/2)
   {
-    stop("k1, k2 cannot be greater than half of the length of the corresponding sample n1 or n2")
+    base::stop("k1, k2 cannot be greater than half of the length of the corresponding sample n1 or n2")
   }
 
   if (B == Inf)

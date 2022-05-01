@@ -1,15 +1,18 @@
 #' Asymptotic confidence interval of AUC based on an unbiased variance estimator
 #' and the asymptotic normality
 #'
-#' @param p_pred A vector of the predicted probabilities for the observations in the data set
-#' @param label_true A vector of the true labels in the dataset, coded as 1 (positive) and 0 (negative)
+#' @param p_pred A vector of the predicted probabilities for the observations
+#' in the data set
+#' @param label_true A vector of the true labels in the dataset, coded as 1
+#' (positive) and 0 (negative)
 #' @param conf_level The confidence level required.The default is 0.95.
-#' @param B An integer indicating the desired number of bootstrap samples to calculate the variance
-#' of the AUC. If B is set to Inf or it is ommited, the exact number of possible partitions will be calculated.
+#' @param B An integer indicating the desired number of bootstrap samples to
+#' calculate the variance of the AUC. If B is set to Inf or if it is ommited,
+#' the exact number of possible partitions will be calculated.
 #'
 #' @return A matrix (or vector) with columns giving lower and upper confidence limits
 #' for each parameter. These will be labeled as (1-level)/2 and 1 - (1-level)/2 in %
-#' (by default 2.5% and 97.5%).
+#' (2.5% and 97.5% by default).
 
 #' @export
 #'
@@ -27,13 +30,13 @@ CI_AUC <- function(p_pred, label_true, conf_level = 0.95, B = Inf)
   # conf_level must be between 0 and 1
   if (conf_level < 0 || conf_level > 1)
   {
-    stop("conf_level must be between 0 and 1")
+    base::stop("conf_level must be between 0 and 1")
   }
 
-  # B is a number or Inf
+  # B must be a number or Inf
   if (B != Inf & B%%1 != 0)
   {
-    stop("B must be equal to an integer number, Inf or not specified.")
+    base::stop("B must be equal to an integer number, Inf or not specified.")
   }
 
   auc.value <- aucvar::auc(p_pred, label_true)

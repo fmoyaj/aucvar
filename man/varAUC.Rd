@@ -22,9 +22,9 @@ Calculate an unbiased variance estimator of AUC
 }
 \examples{
 library(aucvar)
-data <- na.omit(breastcancer) # Omit NA values
+mydata <- na.omit(breastcancer) # Omit NA values
 optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
 predictions <- predict(optimal_model, type="response")
-varAUC(predictions, data$Class, 10^3)
+varAUC(predictions, mydata$Class, 10^3)
 }

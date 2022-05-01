@@ -5,8 +5,9 @@
 #' @param label_true A vector containing the true class labels in the dataset.
 #'
 #' @return Area under the ROC curve, which is equal to the Mann-Whitney
-#'two-sample U-statistic. It is also the estimated probability that the binary classifier will score a
-#'randomly drawn positive sample higher than a randomly drawn negative sample.
+#'two-sample U-statistic. It is also the estimated probability that the binary
+#'classifier will score a randomly drawn positive sample higher than a
+#'randomly drawn negative sample.
 #'
 #' @export
 #'
@@ -23,19 +24,19 @@ auc <- function(p_pred, label_true){
   # Check arguments
   if((!is.vector(p_pred) || !is.vector(label_true)) && !is.factor(label_true))
   {
-    stop("p_pred and label_true must be vectors or a factor")
+    base::stop("p_pred and label_true must be vectors or a factor")
   }
 
   # label_true must have the same length as p_pred
   pred_length <- base::length(p_pred)
   label_length <- base::length(label_true)
   if(pred_length != label_length){
-    stop("p_pred and label_true must have the same length")
+    base::stop("p_pred and label_true must have the same length")
   }
 
   # label_true must have two levels
   if (!base::length(base::levels(base::as.factor(label_true)))){
-    stop("label_true must have two levels")
+    base::stop("label_true must have two levels")
   }
 
   pred <-ROCR::prediction(p_pred, label_true)

@@ -1,9 +1,4 @@
-# Possible errors:
-# label_true is not valid (does not have two levels or has NAs)
-# input data set is not in adequate format
-# Catch errors from other functions e.g. auc
-
-# Private function
+# Helper function
 # Convert a vector of labels into positive (1) and negative classes (0)
 makeBinaryLabels <- function(label_data)
 {
@@ -58,14 +53,32 @@ exactVarAUC <- function(label_true, p_pred, n1, n2)
 #'
 #' @examples
 #' library(aucvar)
-#' data <- na.omit(breastcancer) # Omit NA values
+#' mydata <- na.omit(breastcancer) # Omit NA values
 #' optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-#' `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=data)
+#' `Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
 #' predictions <- predict(optimal_model, type="response")
-#' varAUC(predictions, data$Class, 10^3)
+#' varAUC(predictions, mydata$Class, 10^3)
 varAUC <- function(p_pred,
                    label_true,
                    B = Inf){
+
+  # Checking arguments
+  # label_true must be a vector or a factor
+  if (!base::is.vector(label_true) && !base::is.factor(label_true))
+  {
+    base::stop("label_true must be a vector or a factor")
+  }
+
+  # label_true must have two levels
+  if (!base::length(base::levels(base::as.factor(label_true)))){
+    base::stop("label_true must have two levels")
+  }
+
+  # B must be an integer
+  if (B%%1 != 0 & B != Inf)
+  {
+    base::stop("B must be an integer number or Inf")
+  }
 
   # Convert label_true vector into a factor
   labels <- makeBinaryLabels(label_true)

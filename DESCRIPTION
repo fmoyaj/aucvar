@@ -1,12 +1,15 @@
 Package: aucvar
-Title: What the Package Does (One Line, Title Case)
+Title: Calculate the variance of
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person("Francisca", "Moya Jimenez", , "fmoya@wellesley.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7375-7993")),
+    person("Qing", "Wang", , "qwang@wellesley.edu", role = c("aut"),
+           comment = c(ORCID = "0000-0002-1853-4022"))) 
+Maintainer: Francisca Moya Jimenez <fmoya@wellesley.edu>
+Authors: Francisca Moya Jimenez <fmoya@wellesley.edu>, Qing Wang <qwang@wellesley.edu>
+Description: Calculate an unbiased variance estimator for the variance of the AUC.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

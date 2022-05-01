@@ -31,11 +31,11 @@ makeBinaryLabels <- function(label_data)
 #'
 #' @examples
 #' library(aucvar)
-#' data <- na.omit(breastcancer) # Omit NA values
+#' mydata <- na.omit(breastcancer) # Omit NA values
 #' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
 #' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
 #' # dataset variable names have spaces
-#' var_boot(model_formula, data$Class, data, B = 10^3)
+#' var_boot(model_formula, mydata$Class, mydata, B = 10^3)
 var_boot <- function(formula_string, label_true, data, B, link = "logit")
 {
 
@@ -43,30 +43,30 @@ var_boot <- function(formula_string, label_true, data, B, link = "logit")
   # formula_string must be a string
   if (base::typeof(formula_string) != "character")
   {
-    stop("formula_string must be a string")
+    base::stop("formula_string must be a string")
   }
 
   # label_true must be a vector or a factor
   if (!base::is.vector(label_true) && !base::is.factor(label_true))
   {
-    stop("label_true must be a vector or a factor")
+    base::stop("label_true must be a vector or a factor")
   }
 
   # label_true must have two levels
   if (!base::length(base::levels(base::as.factor(label_true)))){
-    stop("label_true must have two levels")
+    base::stop("label_true must have two levels")
   }
 
   # B must be an integer
   if (B%%1 != 0)
   {
-    stop("B must be an integer number")
+    base::stop("B must be an integer number")
   }
 
   # Links must be in the list of accepted links for the binomial family
   if (!(link %in% c("logit", "probit", "cauchit", "log", "cloglog")))
   {
-    stop("Link provided is not valid. Link must be logit, probit,
+    base::stop("Link provided is not valid. Link must be logit, probit,
          cauchit, log, cloglog")
   }
 
@@ -74,7 +74,9 @@ var_boot <- function(formula_string, label_true, data, B, link = "logit")
   labels <- makeBinaryLabels(label_true)
 
   # Convert string formula into a formula object from the stats package
-  formula.obj <- stats::formula(formula_string)
+  formula.obj <- base::tryCatch({stats::formula(formula_string)}, error = function(){
+    base::stop("Could not convert given formula_string into a formula object.")
+  })
 
   posLabelLen <- base::length(base::subset(labels, labels==1))
   negLabelLen <- base::length(base::subset(labels, labels==0))

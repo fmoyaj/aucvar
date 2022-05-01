@@ -19,7 +19,9 @@ varUn(sample1, sample2, k1, k2, phi, B = Inf, u_stat = NULL)
 
 \item{B}{The number of random partitions in the partition-resampling realization.}
 
-\item{u_stat}{TThe value of the U-statistic. This is an optional argument. if provided, Q(k) is computed as the square of the inpute u_stat vlaue. Otherwise, the U-statistic is computed based on the input kernel function phi.}
+\item{u_stat}{TThe value of the U-statistic. This is an optional argument.
+If provided, Q(k) is computed as the square of the inputed u_stat vlaue.
+Otherwise, the U-statistic is computed based on the input kernel function phi.}
 }
 \value{
 The variance of the 2-sample U-statistic

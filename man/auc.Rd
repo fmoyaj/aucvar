@@ -14,8 +14,9 @@ in the data set.}
 }
 \value{
 Area under the ROC curve, which is equal to the Mann-Whitney
-two-sample U-statistic. It is also the estimated probability that the binary classifier will score a
-randomly drawn positive sample higher than a randomly drawn negative sample.
+two-sample U-statistic. It is also the estimated probability that the binary
+classifier will score a randomly drawn positive sample higher than a
+randomly drawn negative sample.
 }
 \description{
 Calculate the area under the ROC curve
