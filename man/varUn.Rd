@@ -2,7 +2,7 @@
 % Please edit documentation in R/varUn.R
 \name{varUn}
 \alias{varUn}
-\title{Compute the variance of a general 2-sample U-statistic}
+\title{Compute the unbiased variance estimator of a general 2-sample U-statistic}
 \usage{
 varUn(sample1, sample2, k1, k2, phi, B = Inf, u_stat = NULL)
 }
@@ -11,23 +11,25 @@ varUn(sample1, sample2, k1, k2, phi, B = Inf, u_stat = NULL)
 
 \item{sample2}{The second sample.}
 
-\item{k1}{The number of observations from sample 1.}
+\item{k1}{The number of observations drawn from sample 1 to compute the kernel
+function phi.}
 
-\item{k2}{The number of observations from sample 2.}
+\item{k2}{The number of observations drawn from sample 2 to compute the kernel
+function phi.}
 
-\item{phi}{The kernel function for the U-statistic}
+\item{phi}{The kernel function of the U-statistic}
 
 \item{B}{The number of random partitions in the partition-resampling realization.}
 
-\item{u_stat}{TThe value of the U-statistic. This is an optional argument.
-If provided, Q(k) is computed as the square of the inputed u_stat vlaue.
-Otherwise, the U-statistic is computed based on the input kernel function phi.}
+\item{u_stat}{The value of the U-statistic. This is an optional argument.
+If provided, Q(k) is computed as the square of the inputted u_stat value.
+Otherwise, the complete U-statistic is computed based on the input kernel function phi.}
 }
 \value{
-The variance of the 2-sample U-statistic
+The variance of a 2-sample U-statistic
 }
 \description{
-Compute the variance of a general 2-sample U-statistic
+Compute the unbiased variance estimator of a general 2-sample U-statistic
 }
 \examples{
 library(VGAM)
@@ -49,4 +51,9 @@ ind <- 1
 return (2*(ind)-1)
 }
 varUn(x, y, 2, 2, kernel, 10^3, u_stat_value)
+
+}
+\references{
+\cite{Q. Wang and A. Guo (2020). An efficient variance estimator of AUC with applications to
+binary classification. Statistics in Medicine 39 (28): 4281-4300. DOI: 10.1002/sim.8725.}
 }

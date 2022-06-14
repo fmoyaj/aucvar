@@ -2,39 +2,69 @@
 % Please edit documentation in R/CI_AUC.R
 \name{CI_AUC}
 \alias{CI_AUC}
-\title{Asymptotic confidence interval of AUC based on an unbiased variance estimator
+\title{Asymptotic confidence interval of AUC based on a variance estimator
 and the asymptotic normality}
 \usage{
-CI_AUC(p_pred, label_true, conf_level = 0.95, B = Inf)
+CI_AUC(
+  formula_string,
+  link = "logit",
+  data,
+  label_true,
+  conf_level = 0.95,
+  method = "unbiased",
+  B = Inf,
+  d = Inf
+)
 }
 \arguments{
-\item{p_pred}{A vector of the predicted probabilities for the observations
-in the data set}
+\item{formula_string}{A string with an expression of the form \code{y ~ model} that represents
+the binary classification model. It may include operators as +, ^ and :}
 
-\item{label_true}{A vector of the true labels in the dataset, coded as 1
+\item{link}{A string specifying the model link function for glm function
+used to fit the binomial model. Possible links are \code{logit}., \code{probit}, \code{cauchit},
+(corresponding to logistic, normal and Cauchy CDFs respectively) \code{log} and
+\code{cloglog} (complementary log-log). The default is \code{logit}.}
+
+\item{data}{A data frame, list or environment containing the variables in the model
+except for the response variable. It can also be an object coercible by as.data.frame
+to a data frame.}
+
+\item{label_true}{A vector of the true labels in the data set, coded as 1
 (positive) and 0 (negative)}
 
 \item{conf_level}{The confidence level required.The default is 0.95.}
 
-\item{B}{An integer indicating the desired number of bootstrap samples to
-calculate the variance of the AUC. If B is set to Inf or if it is ommited,
+\item{method}{The method to use to compute the variance estimator. The possible
+methods are "unbiased" for the unbiased variance estimator of the AUC devised by
+Wang and Guo, "jackknife" for the jackknife variance estimator, and "bootstrap"
+for the bootstrap variance estimator of the AUC.}
+
+\item{B}{if the method chosen is "unbiased", B is an integer indicating the
+desired number of bootstrap samples to calculate the variance of the AUC.
+If the method chosen is "unbiased" or "jackknife" and B is set to Inf or if it is omitted,
 the exact number of possible partitions will be calculated.}
+
+\item{d}{Number of data entries to remove to generate the jackknife samples for the
+jackknife variance estimator. This argument is only required when the method chosen
+is "jackknife". If d is equal to 1, the delete-one version of the jackknife
+variance estimator will be used in which case B does not need to be specified.}
 }
 \value{
 A matrix (or vector) with columns giving lower and upper confidence limits
-for each parameter. These will be labeled as (1-level)/2 and 1 - (1-level)/2 in \%
-(2.5\% and 97.5\% by default).
+for each confidence level. These will be labeled as (1-level)/2 and 1 - (1-level)/2 in
+percentage. (2.5\% and 97.5\% by default).
 }
 \description{
-Asymptotic confidence interval of AUC based on an unbiased variance estimator
+Asymptotic confidence interval of AUC based on a variance estimator
 and the asymptotic normality
 }
 \examples{
 library(aucvar)
-mydata <- na.omit(breastcancer) # Omit NA values
-optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
-prob <- predict(optimal_model, type="response")
-labels <- mydata$Class
-CI_AUC(prob, labels)
+my_data <- na.omit(breastcancer) # Omit NA values
+model_formula <- "Class~`Clump Thickness`+ `Uniformity of Cell Size`+`Uniformity of Cell Shape`+
+`Marginal Adhesion` + `Single Epithelial Cell Size` + `Bare Nuclei` +
+`Bland Chromatin` + `Normal Nucleoli` + `Mitoses`"
+# Use quotes inside double quotes since data set variable names have spaces
+labels <- my_data$Class
+CI_AUC(model_formula, "logit", my_data, labels, 0.95, "unbiased", B = 10^3)
 }

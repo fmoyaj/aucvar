@@ -13,13 +13,13 @@ makeBinaryLabels <- function(label_data)
 
 
 
-#' Calculate the bootstrap variance estimator for AUC
+#' Calculate the naive nonparametric bootstrap variance estimator for AUC
 #'
 #' @param formula_string A string with an expression of the form `y ~ model` that represents
 #' the binary classification model. It may include operators as +, ^ and :
 #' @param label_true A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)
-#' @param data A data frame, list or environment containing the variables in the model
-#' except for the response variable. It can also be an object coercible by as.data.frame
+#' @param data A data frame, list or environment containing the variables in the model.
+#' It can also be an object coercible by as.data.frame
 #' to a data frame.
 #' @param B An integer indicating the desired number of bootstrap samples
 #' @param link A string specifying the model link function for glm function
@@ -31,11 +31,17 @@ makeBinaryLabels <- function(label_data)
 #'
 #' @examples
 #' library(aucvar)
-#' mydata <- na.omit(breastcancer) # Omit NA values
-#' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-#' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
-#' # dataset variable names have spaces
-#' var_boot(model_formula, mydata$Class, mydata, B = 10^3)
+#' my_data <- na.omit(breastcancer) # Omit NA values
+#' model_formula <- "Class~`Clump Thickness`+ `Uniformity of Cell Size`+`Uniformity of Cell Shape`+
+#' `Marginal Adhesion` + `Single Epithelial Cell Size` + `Bare Nuclei` +
+#' `Bland Chromatin` + `Normal Nucleoli` + `Mitoses`"
+#' # Use quotes inside double quotes since data set variable names have spaces
+#' var_boot(model_formula, my_data$Class, my_data, B = 10^3)
+#'
+#' @references
+#' \cite{B. Efron and C. Stein (1981). The jackknife estimate of variance. The Annals of
+#' Statistics 9: 586-596.}
+#'
 var_boot <- function(formula_string, label_true, data, B, link = "logit")
 {
 

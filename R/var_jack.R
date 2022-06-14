@@ -34,34 +34,40 @@ deleteOne <- function(formula.obj, labels, data, link) {
 }
 
 
-#' Calculate the jackknife variance estimator for AUC
+#' Calculate the delete-d jackknife variance estimator for AUC
 #'
 #' @param formula_string A string with an expression of the form y ~ model that represents
 #' the binary classification model. It may include operators as +, ^ and :
 #' @param label_true A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)
-#' @param data A data frame, list or environment containing the variables in the model
-#' except for the response variable. It can also be an object coercible by as.data.frame
+#' @param data A data frame, list or environment containing the variables in the model.
+#' It can also be an object coercible by as.data.frame
 #' to a data frame.
 #' @param B An integer indicating the desired number of jackknife samples.
 #' @param d Number of data entries to remove to generate the jackknife samples.
 #' If d is equal to 1, the delete-one version of the jackknife variance estimator
-#' will be used and B does not need to be specified.
+#' will be used in which case B does not need to be specified.
 #' @param link A string specifying the model link function for glm function
 #' used to fit the binomial model. Possible links include `logit`., `probit`, `cauchit`,
 #' (corresponding to logistic, normal and Cauchy CDFs respectively) `log` and
 #' `cloglog` (complementary log-log). The default is `logit`.
 #'
-#' @return The value of the jackknife variance estimator for the AUC
+#' @return The value of the delete-d jackknife variance estimator for the AUC
 #' @export
 #'
 #' @examples
 #' library(aucvar)
-#' mydata <- na.omit(breastcancer) # Omit NA values
-#' model_formula <- "Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-#' `Bare Nuclei` + `Bland Chromatin`" # Use quotes inside double quotes since
-#' # dataset variable names have spaces
-#' var_jackknife(model_formula, mydata$Class, mydata, B = 10^3, d = 20)
-var_jackknife <- function(formula_string, label_true, data, B = Inf, d, link = "logit")
+#' my_data <- na.omit(breastcancer) # Omit NA values
+#' model_formula <- "Class~`Clump Thickness`+ `Uniformity of Cell Size`+`Uniformity of Cell Shape`+
+#' `Marginal Adhesion` + `Single Epithelial Cell Size` + `Bare Nuclei` +
+#' `Bland Chromatin` + `Normal Nucleoli` + `Mitoses`"
+#' # Use quotes inside double quotes since data set variable names have spaces
+#' var_jack(model_formula, my_data$Class, my_data, B = 10^3, d = 20)
+#'
+#' @references
+#' \cite{B. Efron (1979). Bootstrap methods: another look at the jackknife The Annals of
+#' Statistics 7: 1-26.}
+#'
+var_jack <- function(formula_string, label_true, data, B = Inf, d, link = "logit")
 {
   # Check arguments
   # formula_string must be a string
@@ -88,7 +94,7 @@ var_jackknife <- function(formula_string, label_true, data, B = Inf, d, link = "
   }
 
   # Links must be in the list of accepted links for the binomial family
-  if (!(link %in% c("logit", "probit", "cauchit", "log", "cloglog")))
+  if (!(link %in% base::c("logit", "probit", "cauchit", "log", "cloglog")))
   {
     base::stop("Link provided is not valid. Link must be logit, probit,
          cauchit, log, cloglog")
@@ -99,7 +105,7 @@ var_jackknife <- function(formula_string, label_true, data, B = Inf, d, link = "
   # N must be greater than d
   if (N < d)
   {
-    base::stop("d must be smaller than the length of the dataset provided")
+    base::stop("d must be smaller than the length of the data set provided")
   }
 
   # Convert label_true vector into a factor

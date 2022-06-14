@@ -9,10 +9,11 @@ varAUC(p_pred, label_true, B = Inf)
 \arguments{
 \item{p_pred}{A vector of the predicted probabilities for the observations in the data set}
 
-\item{label_true}{A vector of the true labels in the dataset, coded as 1 (positive) and 0 (negative)}
+\item{label_true}{A vector of the true labels in the data set, coded as 1 (positive) and 0 (negative)}
 
 \item{B}{The number of random partitions to use in the partition-resampling scheme. If B is
-set to Inf or it is ommited, the exact number of possible partitions will be calculated.}
+set to Inf or it is ommited, the exact unbiased variance estimation formula without the partition
+resampling scheme is realized.}
 }
 \value{
 The value of the AUC variance estimator
@@ -22,13 +23,16 @@ Calculate an unbiased variance estimator of AUC
 }
 \examples{
 library(aucvar)
-mydata <- na.omit(breastcancer) # Omit NA values
-optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
-predictions <- predict(optimal_model, type="response")
-varAUC(predictions, mydata$Class, 10^3)
+my_data <- na.omit(breastcancer) # Omit NA values
+my_model <- glm(Class~`Clump Thickness`+ `Uniformity of Cell Size` +
+`Uniformity of Cell Shape`+ `Marginal Adhesion` + `Single Epithelial Cell Size` +
+`Bare Nuclei` + `Bland Chromatin` + `Normal Nucleoli` + `Mitoses`,
+family=binomial(link="logit"), data=my_data)
+predictions <- predict(my_model, type="response")
+varAUC(predictions, my_data$Class, 10^3)
+
 }
 \references{
-\cite{Wang Q, Guo A. An efficient variance estimator of AUC and its applications to binary
-classification. Statistics in Medicine. 2020;1–20. https://doi.org/10.1002/sim.8725}
+\cite{Q. Wang and A. Guo (2020). An efficient variance estimator of AUC with applications to
+binary classification. Statistics in Medicine 39 (28): 4281-4300. DOI: 10.1002/sim.8725.}
 }

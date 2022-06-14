@@ -72,19 +72,21 @@ exactVar <- function(sample1, sample2, k1, k2, phi, u_stat)
 
 
 
-#' Compute the variance of a general 2-sample U-statistic
+#' Compute the unbiased variance estimator of a general 2-sample U-statistic
 #'
 #' @param sample1 The first sample.
 #' @param sample2 The second sample.
-#' @param k1 The number of observations from sample 1.
-#' @param k2 The number of observations from sample 2.
-#' @param phi The kernel function for the U-statistic
+#' @param k1 The number of observations drawn from sample 1 to compute the kernel
+#' function phi.
+#' @param k2 The number of observations drawn from sample 2 to compute the kernel
+#' function phi.
+#' @param phi The kernel function of the U-statistic
 #' @param B The number of random partitions in the partition-resampling realization.
-#' @param u_stat TThe value of the U-statistic. This is an optional argument.
-#' If provided, Q(k) is computed as the square of the inputed u_stat vlaue.
-#' Otherwise, the U-statistic is computed based on the input kernel function phi.
+#' @param u_stat The value of the U-statistic. This is an optional argument.
+#' If provided, Q(k) is computed as the square of the inputted u_stat value.
+#' Otherwise, the complete U-statistic is computed based on the input kernel function phi.
 #'
-#' @return The variance of the 2-sample U-statistic
+#' @return The variance of a 2-sample U-statistic
 #' @export
 #'
 #' @examples
@@ -107,6 +109,10 @@ exactVar <- function(sample1, sample2, k1, k2, phi, u_stat)
 #' return (2*(ind)-1)
 #' }
 #' varUn(x, y, 2, 2, kernel, 10^3, u_stat_value)
+#'
+#' @references
+#' \cite{Q. Wang and A. Guo (2020). An efficient variance estimator of AUC with applications to
+#' binary classification. Statistics in Medicine 39 (28): 4281-4300. DOI: 10.1002/sim.8725.}
 
 
 varUn <- function(sample1, sample2, k1, k2, phi , B = Inf, u_stat= NULL)

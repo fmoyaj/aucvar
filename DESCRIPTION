@@ -10,6 +10,7 @@ Maintainer: Francisca Moya Jimenez <fmoya@wellesley.edu>
 Authors: Francisca Moya Jimenez <fmoya@wellesley.edu>, Qing Wang <qwang@wellesley.edu>
 Description: Calculate an unbiased variance estimator for the variance of the AUC.
 License: MIT + file LICENSE
+Language: en-US
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

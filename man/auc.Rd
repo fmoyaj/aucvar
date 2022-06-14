@@ -10,23 +10,31 @@ auc(p_pred, label_true)
 \item{p_pred}{A vector of the predicted probabilities for the observations
 in the data set.}
 
-\item{label_true}{A vector containing the true class labels in the dataset.}
+\item{label_true}{A vector containing the true class labels in the data set.}
 }
 \value{
-Area under the ROC curve, which is equal to the Mann-Whitney
-two-sample U-statistic. It is also the estimated probability that the binary
-classifier will score a randomly drawn positive sample higher than a
-randomly drawn negative sample.
+The sample estimate of the area under ROC curve, realized based on a two-
+sample U-statistic estimator that is akin to the Mann-Whitney two-sample U-statistic.
+It is also the estimated probability that the binary classifier will score a
+randomly drawn positive sample higher than a randomly drawn negative sample.
 }
 \description{
 Calculate the area under the ROC curve
 }
 \examples{
 library(aucvar)
-mydata <- na.omit(breastcancer) # Omit NA values
-optimal_model <- glm(Class~`Clump Thickness`+`Uniformity of Cell Shape`+
-`Bare Nuclei` + `Bland Chromatin`, family=binomial(link="logit"), data=mydata)
-prob <- predict(optimal_model, type="response")
-labels <- mydata$Class
+my_data <- na.omit(breastcancer) # Omit NA values
+full_model <- glm(Class~`Clump Thickness`+ `Uniformity of Cell Size` +
+`Uniformity of Cell Shape`+ `Marginal Adhesion` + `Single Epithelial Cell Size`
++ `Bare Nuclei` + `Bland Chromatin` + `Normal Nucleoli` + `Mitoses`,
+ family=binomial(link="logit"), data=my_data)
+prob <- predict(full_model, type="response")
+labels <- my_data$Class
 auc(prob, labels)
+
+}
+\references{
+\cite{H. B. Mann and D. R. Whitney (1947). On a test of whether one of two random
+variables is stochastically larger than the other. Annals of Mathematical Statistics 18:
+50-60.}
 }
