@@ -36,10 +36,10 @@ the unbiased variance estimator of a general two-sample U-statistic.
 
 ## Installation
 
-You can install the development version of aucvar from [GitHub](https://github.com/) with:
+You can install the development version of aucvar in R from [GitHub](https://github.com/) by running the following commands in the R console:
 
 ``` r
-# install.packages("devtools")
+install.packages("devtools") # Run if you do not have devtools installed
 devtools::install_github("fmoyaj/aucvar")
 ```
 

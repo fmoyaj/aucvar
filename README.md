@@ -25,11 +25,12 @@ general two-sample U-statistic.
 
 ## Installation
 
-You can install the development version of aucvar from
-[GitHub](https://github.com/) with:
+You can install the development version of aucvar in R from
+[GitHub](https://github.com/) by running the following commands in the R
+console:
 
 ``` r
-# install.packages("devtools")
+install.packages("devtools") # Run if you do not have devtools installed
 devtools::install_github("fmoyaj/aucvar")
 ```
 
@@ -47,7 +48,7 @@ full_model <- glm(Class~`Clump Thickness`+ `Uniformity of Cell Size` +
 family=binomial(link="logit"), data=my_data)
 predictions <- predict(full_model, type="response")
 varAUC(predictions, my_data$Class, 10^3)
-#> [1] 1.726719e-06
+#> [1] 1.539795e-06
 ```
 
 You can also calculate the AUC for a logistic regression model
